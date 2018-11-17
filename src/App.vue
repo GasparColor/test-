@@ -111,7 +111,6 @@ export default {
 <style lang="scss">
 @import "./styles/normalize.css";
 
-
 @font-face {
   font-family: "Bnpp-rounded";
   src: url("fonts/bnpp-rounded-v2.woff") format("woff");

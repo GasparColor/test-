@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.article
+  .article
     header.article__header
       img.article__headerImg(:src="require(`../assets/group-5.png`)")
 
@@ -8,7 +8,10 @@
       p.article__text(v-text="$props.view.text")
 
       dl.article__totalList.totalList
-        div.totalList__item(v-for="(item, index) in $props.view.totalList" :key="index")
+        .totalList__item(
+          v-for="(item, index) in $props.view.totalList"
+          :key="index"
+        )
           dt.totalList__key(v-text="item.key")
           dd.totalList__value(v-text="item.value")
 
@@ -16,15 +19,20 @@
         li.operations__item(
           v-for="(item, index) in $props.view.operations"
           :key="index"
+        )
+          time.operations__date(
+            v-if="item.date"
+            v-text="item.date"
           )
 
-          time.operations__date(v-if="item.date" v-text="item.date")
-
-          div.operations__imgWrapper(:class="values[index]")
-            div.operations__img(v-if="item.icon" :class="item.icon")
+          .operations__imgWrapper(:class="iconLineClass[index]")
+            .operations__img(
+              v-if="item.icon"
+              :class="item.icon"
+            )
               img(:src="require(`../assets/${item.icon}.svg`)")
 
-          div.operations__textWrapper
+          .operations__textWrapper
             p.operations__text(v-html="item.text")
             span.operations__decrement(
               v-if="item.decrement"
@@ -43,7 +51,12 @@
             v-for="(button, index) in $props.view.assessment.buttons"
             :key="index"
             )
-            button.assessment__button(type="button" v-text="button.text" :class="button.type")
+            button.assessment__button(
+              type="button"
+              v-text="button.text"
+              :class="button.type"
+              @click="buttonHandler(button)"
+            )
 
 </template>
 
@@ -53,7 +66,7 @@ export default {
 
   data() {
     return {
-      values: [],
+      iconLineClass: [],
     };
   },
 
@@ -64,21 +77,27 @@ export default {
     },
   },
 
-
   mounted() {
-    this.$props.view.operations.forEach((val, key) => {
-      if (this.$props.view.operations[key + 1]) {
-        this.values.push(this.$props.view.operations[key].icon
-          + this.$props.view.operations[key + 1].icon);
-      }
-    });
+    this.matchIconLineClass();
+  },
+
+  methods: {
+    matchIconLineClass() {
+      this.$props.view.operations.forEach((val, key) => {
+        if (this.$props.view.operations[key + 1]) {
+          this.iconLineClass.push(this.$props.view.operations[key].icon
+            + this.$props.view.operations[key + 1].icon);
+        }
+      });
+    },
+    buttonHandler(button) {
+      this.$emit('assessment-button-click', button);
+    },
   },
 };
 </script>
 
-
 <style scoped lang="scss">
-
 @import "../styles/include-media";
 
 $breakpoints: (
@@ -95,20 +114,17 @@ $breakpoints: (
 .article__header {
   max-width: 1440px;
   margin: 0 auto;
+  /*margin-top: -30px;*/
 }
 
 .article__headerImg {
   width: 100%;
 }
 
-.article__main {
-  max-width: 55%;
-  margin: 0 auto;
-}
-
-
 .article__title {
-  margin: 100px 0 24px;
+  max-width: 58%;
+  padding: 0 20px;
+  margin: 100px auto 24px;
   font-family: "Bnpp-rounded-bold", Helvetica, Arial, sans-serif;
   font-size: 48px;
   line-height: 1.13;
@@ -117,13 +133,17 @@ $breakpoints: (
 
 @include media("<tablet") {
   .article__title {
+    max-width: 100%;
+    margin: 50px auto 16px;
     font-size: 32px;
     line-height: 1.19;
   }
 }
 
 .article__text {
-  margin: 0;
+  max-width: 58%;
+  margin: 0 auto;
+  padding: 0 20px;
   font-size: 32px;
   line-height: 1.25;
   color: #000000;
@@ -131,21 +151,29 @@ $breakpoints: (
 
 @include media("<tablet") {
   .article__text {
+    max-width: 100%;
     font-size: 20px;
     line-height: 1.3;
   }
 }
 
 .article__totalList {
-  margin: 54px 0 24px;
+  max-width: 58%;
+  margin: 54px auto 24px;
+  padding: 0 20px;
 }
 
-.totalList__item {
-  display: flex;
+@include media("<tablet") {
+  .article__totalList {
+    max-width: 100%;
+    margin: 30px auto 24px;
+  }
 }
 
 .totalList__key{
   position: relative;
+  float: left;
+  margin-right: 15px;
   &::after{
     position: absolute;
     right: -8px;
@@ -153,9 +181,8 @@ $breakpoints: (
   }
 }
 
-// TODO mixin
 .totalList__value {
-  margin-left: 14px;
+  margin-left: 0;
 }
 
 .totalList__key,
@@ -163,6 +190,14 @@ $breakpoints: (
   font-size: 20px;
   line-height: 1.4;
   color: #7c8a9c;
+}
+
+@include media("<tablet") {
+  .totalList__key,
+  .totalList__value {
+    font-size: 15px;
+    line-height: normal;
+  }
 }
 
 .totalList__item:first-child {
@@ -175,22 +210,57 @@ $breakpoints: (
   }
 }
 
+@include media("<tablet") {
+  .totalList__item {
+    margin-bottom: 3px;
+    &:first-child {
+      margin-bottom: 4px;
+      .totalList__key,
+      .totalList__value {
+        font-size: 20px;
+        line-height: 1.3;
+      }
+    }
+  }
+}
+
 .operations {
-  margin: 0;
-  padding: 0;
+  max-width: 58%;
+  margin: 0 auto;
+  padding: 0 20px;
   list-style: none;
 }
+
+@include media("<tablet") {
+  .operations {
+    max-width: 100%;
+  }
+}
+
 .operations__item {
   position: relative;
+  &:last-child .operations__img::before {
+    display: none
+  }
 }
-.operations__item:last-child .operations__img::before {
-  display: none;
+
+@include media("<tablet") {
+  .operations__item {
+    margin-left: 50px;
+  }
 }
 
 .operations__date {
   font-size: 20px;
   line-height: 1.4;
   color: #7c8a9c;
+}
+
+@include media("<tablet") {
+  .operations__date {
+    font-size: 15px;
+    line-height: normal;
+  }
 }
 
 .operations__textWrapper {
@@ -204,50 +274,38 @@ $breakpoints: (
   height: 100%;
 }
 
-.operations__imgWrapper.cartinjury .operations__img::before{
-  background-image: linear-gradient(to bottom, #f0f0f3, #f05454);
-}
-
-.operations__imgWrapper.injurycart .operations__img::before{
-  background-image: linear-gradient(to bottom, #f05454, #f0f0f3);
-}
-
-.operations__imgWrapper.injurycall .operations__img::before{
-  background-image: linear-gradient(to bottom, #f05454, #feb800);
-}
-.operations__imgWrapper.calldoc .operations__img::before{
-  background-image: linear-gradient(to bottom, #feb800, #7d899c);
-}
-.operations__imgWrapper.doccall .operations__img::before{
-  background-image: linear-gradient(to bottom, #7d899c, #feb800);
-}
-.operations__imgWrapper.callcall .operations__img::before{
-  background-image: linear-gradient(to bottom, #feb800, #feb800);
-}
-.operations__imgWrapper.callmoney .operations__img::before{
-  background-image: linear-gradient(to bottom, #feb800, #159e6f);
+@include media("<tablet") {
+  .operations__imgWrapper {
+    left: -49px;
+  }
 }
 
 .operations__text {
+  margin: 4px 0 30px;
   font-size: 28px;
   line-height: 1.21;
   color: #000000;
-  margin: 4px 0 30px;
+}
+
+@include media("<tablet") {
+  .operations__text {
+    font-size: 20px;
+    line-height: 1.3;
+  }
 }
 
 .operations__img {
+  display: flex;
   top: -3px;
   left: -62px;
-  display: flex;
-  z-index: 99;
-  outline: 4px solid #ffffff;
   width: 34px;
   height: 34px;
+  z-index: 99;
+  outline: 4px solid #ffffff;
   background-color: #f0f0f3;
   border-radius: 50px;
 
-
-    &::before {
+  &::before {
       position: absolute;
       content: '';
       bottom: -33px;
@@ -263,25 +321,25 @@ $breakpoints: (
       position:relative;
     }
 
-      &.cart {
-        background-color: #f0f0f3;
-      }
+    &.cart {
+      background-color: #f0f0f3;
+    }
 
-      &.injury {
-        background-color: #f05454;
-      }
+    &.injury {
+      background-color: #f05454;
+    }
 
-      &.call {
-        background-color: #feb800;
-      }
+    &.call {
+      background-color: #feb800;
+    }
 
-      &.doc {
-        background-color: #7d899c;
-      }
+    &.doc {
+      background-color: #7d899c;
+    }
 
-      &.money {
-        background-color: #159e6f;
-      }
+    &.money {
+      background-color: #159e6f;
+    }
 }
 
 .operations__decrement,
@@ -293,6 +351,16 @@ $breakpoints: (
   line-height: 1.4;
 }
 
+@include media("<tablet") {
+  .operations__decrement,
+  .operations__increment {
+    font-size: 15px;
+    line-height: normal;
+    right: 0;
+    top: -14px;
+  }
+}
+
 .operations__decrement {
   color: #f05454;
 }
@@ -302,8 +370,16 @@ $breakpoints: (
 }
 
 .assessment {
+  margin: 0 auto;
+  max-width: 58%;
   border-top: 1px solid #e5e5ea;
-  padding-bottom: 100px;
+  padding:0 20px 100px;
+}
+
+@include media("<tablet") {
+  .assessment {
+    max-width: 100%;
+  }
 }
 
 .assessment__title {
@@ -313,15 +389,31 @@ $breakpoints: (
   color: #7c8a9c;
 }
 
+@include media("<tablet") {
+  .assessment__title {
+    text-align:center;
+    font-size: 16px;
+    line-height: 1.25;
+  }
+}
+
 .assessment__list {
   display: flex;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   list-style: none;
 }
 
+@include media("<tablet") {
+  .assessment__list {
+    justify-content: center;
+  }
+}
+
 .assessment__button {
   border: none;
+  font-size: 19px;
+  line-height: normal;
   outline: 1px solid #e5e5ea;
   border-radius: 5px;
   height: 69px;
@@ -347,5 +439,99 @@ $breakpoints: (
     color: #bb1f70;
     background: url("../assets/bad.svg") no-repeat center 25%;
   }
+}
+
+@include media("<tablet") {
+  .assessment__button {
+    font-size: 16px;
+    line-height: 1.5;
+    width: 112px;
+  }
+}
+
+
+/*CART*/
+.operations__imgWrapper.cartcart .operations__img::before{
+  background-image: linear-gradient(to bottom, #f0f0f3, #f0f0f3);
+}
+.operations__imgWrapper.cartinjury .operations__img::before{
+  background-image: linear-gradient(to bottom, #f0f0f3, #f05454);
+}
+.operations__imgWrapper.cartcall .operations__img::before{
+  background-image: linear-gradient(to bottom, #f0f0f3, #feb800);
+}
+.operations__imgWrapper.cartdoc .operations__img::before{
+  background-image: linear-gradient(to bottom, #f0f0f3, #7d899c);
+}
+.operations__imgWrapper.cartmoney .operations__img::before{
+  background-image: linear-gradient(to bottom, #f0f0f3, #159e6f);
+}
+
+/*INJURY*/
+.operations__imgWrapper.injuryinjury .operations__img::before{
+  background-image: linear-gradient(to bottom, #f05454, #f05454);
+}
+.operations__imgWrapper.injurycart .operations__img::before{
+  background-image: linear-gradient(to bottom, #f05454, #f0f0f3);
+}
+.operations__imgWrapper.injurycall .operations__img::before{
+  background-image: linear-gradient(to bottom, #f05454, #feb800);
+}
+.operations__imgWrapper.injurydoc .operations__img::before{
+  background-image: linear-gradient(to bottom, #f05454, #7d899c);
+}
+.operations__imgWrapper.injurymoney .operations__img::before{
+  background-image: linear-gradient(to bottom, #f05454, #159e6f);
+}
+
+/*CALL*/
+.operations__imgWrapper.callcall .operations__img::before{
+  background-image: linear-gradient(to bottom, #feb800, #feb800);
+}
+.operations__imgWrapper.callcart .operations__img::before{
+  background-image: linear-gradient(to bottom, #feb800, #f0f0f3);
+}
+.operations__imgWrapper.callinjury .operations__img::before{
+  background-image: linear-gradient(to bottom, #feb800, #f05454);
+}
+.operations__imgWrapper.calldoc .operations__img::before{
+  background-image: linear-gradient(to bottom, #feb800, #7d899c);
+}
+.operations__imgWrapper.callmoney .operations__img::before{
+  background-image: linear-gradient(to bottom, #feb800, #159e6f);
+}
+
+/*DOC*/
+.operations__imgWrapper.docdoc .operations__img::before{
+  background-image: linear-gradient(to bottom, #7d899c, #7d899c);
+}
+.operations__imgWrapper.doccart .operations__img::before{
+  background-image: linear-gradient(to bottom, #7d899c, #f0f0f3);
+}
+.operations__imgWrapper.docinjury .operations__img::before{
+  background-image: linear-gradient(to bottom, #7d899c, #f05454);
+}
+.operations__imgWrapper.doccall .operations__img::before{
+  background-image: linear-gradient(to bottom, #7d899c, #feb800);
+}
+.operations__imgWrapper.docmoney .operations__img::before{
+  background-image: linear-gradient(to bottom, #7d899c, #159e6f);
+}
+
+/*MONEY*/
+.operations__imgWrapper.moneymoney .operations__img::before{
+  background-image: linear-gradient(to bottom, #159e6f, #159e6f);
+}
+.operations__imgWrapper.moneycart .operations__img::before{
+  background-image: linear-gradient(to bottom, #159e6f, #f0f0f3);
+}
+.operations__imgWrapper.moneyinjury .operations__img::before{
+  background-image: linear-gradient(to bottom, #159e6f, #f05454);
+}
+.operations__imgWrapper.moneycall .operations__img::before{
+  background-image: linear-gradient(to bottom, #159e6f, #feb800);
+}
+.operations__imgWrapper.moneydoc .operations__img::before{
+  background-image: linear-gradient(to bottom, #159e6f, #7d899c);
 }
 </style>
