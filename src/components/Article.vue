@@ -1,7 +1,7 @@
 <template lang="pug">
   .article
     header.article__header
-      img.article__headerImg(:src="require(`../assets/group-5.png`)")
+      img.article__headerImg(:src="require(`../assets/header.png`)")
 
     main.article__main
       h2.article__title(v-text="$props.view.title")
@@ -100,11 +100,7 @@ export default {
 <style scoped lang="scss">
 @import "../styles/include-media";
 
-$breakpoints: (
-  phone: 640px,
-  tablet: 768px,
-  desktop: 1024px);
-
+$breakpoints: (tablet: 768px) !default;
 
 .article {
   display: flex;
@@ -114,7 +110,6 @@ $breakpoints: (
 .article__header {
   max-width: 1440px;
   margin: 0 auto;
-  /*margin-top: -30px;*/
 }
 
 .article__headerImg {
@@ -122,7 +117,7 @@ $breakpoints: (
 }
 
 .article__title {
-  max-width: 58%;
+  max-width: 864px;
   padding: 0 20px;
   margin: 100px auto 24px;
   font-family: "Bnpp-rounded-bold", Helvetica, Arial, sans-serif;
@@ -141,7 +136,7 @@ $breakpoints: (
 }
 
 .article__text {
-  max-width: 58%;
+  max-width: 864px;
   margin: 0 auto;
   padding: 0 20px;
   font-size: 32px;
@@ -158,7 +153,7 @@ $breakpoints: (
 }
 
 .article__totalList {
-  max-width: 58%;
+  max-width: 864px;
   margin: 54px auto 24px;
   padding: 0 20px;
 }
@@ -225,7 +220,7 @@ $breakpoints: (
 }
 
 .operations {
-  max-width: 58%;
+  max-width: 864px;
   margin: 0 auto;
   padding: 0 20px;
   list-style: none;
@@ -241,6 +236,12 @@ $breakpoints: (
   position: relative;
   &:last-child .operations__img::before {
     display: none
+  }
+}
+
+@include media('>=tablet', '<980px') {
+  .operations__item {
+    margin-left:69px;
   }
 }
 
@@ -314,32 +315,32 @@ $breakpoints: (
       width: 4px;
       height: 100%;
       background-image: linear-gradient(to bottom, #f0f0f3, #f05454);
-    }
+  }
 
-    img {
-      margin: auto;
-      position:relative;
-    }
+  img {
+    margin: auto;
+    position:relative;
+  }
 
-    &.cart {
-      background-color: #f0f0f3;
-    }
+  &.cart {
+    background-color: #f0f0f3;
+  }
 
-    &.injury {
-      background-color: #f05454;
-    }
+  &.injury {
+    background-color: #f05454;
+  }
 
-    &.call {
-      background-color: #feb800;
-    }
+  &.call {
+    background-color: #feb800;
+  }
 
-    &.doc {
-      background-color: #7d899c;
-    }
+  &.doc {
+    background-color: #7d899c;
+  }
 
-    &.money {
-      background-color: #159e6f;
-    }
+  &.money {
+    background-color: #159e6f;
+  }
 }
 
 .operations__decrement,
@@ -351,13 +352,19 @@ $breakpoints: (
   line-height: 1.4;
 }
 
+@include media("<1135px") {
+  .operations__decrement,
+  .operations__increment {
+    right: 0;
+    top: -20px;
+  }
+}
+
 @include media("<tablet") {
   .operations__decrement,
   .operations__increment {
     font-size: 15px;
     line-height: normal;
-    right: 0;
-    top: -14px;
   }
 }
 
@@ -371,7 +378,7 @@ $breakpoints: (
 
 .assessment {
   margin: 0 auto;
-  max-width: 58%;
+  max-width: 864px;
   border-top: 1px solid #e5e5ea;
   padding:0 20px 100px;
 }
